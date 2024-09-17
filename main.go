@@ -34,7 +34,8 @@ func main() {
 func handleConnection(session *models.Session) {
 	defer session.Conn.Close()
 
-	// Process incoming messages
+	var player *models.Player = models.NewPlayer(session) // Initially, no player is assigned
+
 	for {
 		buffer := make([]byte, 1024)
 		n, err := session.Conn.Read(buffer)
@@ -44,13 +45,25 @@ func handleConnection(session *models.Session) {
 		}
 
 		data := serializers.NewByteBufferWithData(buffer[:n])
-		opcode := data.ReadInt16() // Assuming opcode is 16-bit
+		opcode := data.ReadUInt16() // Assuming opcode is 16-bit
 
-		// Call handler based on opcode
-		if handler, ok := Handlers.MessageHandlers[opcode]; ok {
-			handler(data, session)
+		if opcode < 0x100 {
+			// Call handler based on opcode
+			if handler, ok := AuthHandlers[opcode]; ok {
+				handler(data, session)
+			} else {
+				fmt.Println("Unknown opcode:", opcode)
+			}
 		} else {
-			fmt.Println("Unknown opcode:", opcode)
+			if player != nil {
+				// Call handler based on opcode
+				if handler, ok := GameHandlers[opcode]; ok {
+					handler(data, player)
+				} else {
+					fmt.Println("Unknown opcode:", opcode)
+				}
+			}
 		}
+
 	}
 }

@@ -5,6 +5,6 @@ import (
 	"main/serializers"
 )
 
-func HandleGameUpdatePosition(data *serializers.ByteBuffer, session *models.Session) {
+func HandleGameUpdatePosition(data *serializers.ByteBuffer, player *models.Player) {
 
 }

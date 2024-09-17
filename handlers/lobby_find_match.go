@@ -2,11 +2,12 @@ package handlers
 
 import (
 	"fmt"
-	"net"
+	"main/models"
+	"main/serializers"
 	// Import other necessary packages
 )
 
-func HandleLobbyFindMatch(data []byte, conn net.Conn) {
+func HandleLobbyFindMatch(data *serializers.ByteBuffer, player *models.Player) {
 	// Deserialize data
 	// Process finding match
 	fmt.Println("Handling LOBY_FIND_MATCH")
