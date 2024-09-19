@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	handlers "main/handlers"
 	"main/models"
 	"main/serializers"
 	"net"
@@ -26,19 +27,18 @@ func main() {
 		}
 
 		// Create session for the connected player
-		session := models.NewSession(conn)
-		go handleConnection(session)
+		// session :=
+		player := models.NewPlayer(models.NewSession(conn))
+		go handleConnection(player)
 	}
 }
 
-func handleConnection(session *models.Session) {
-	defer session.Conn.Close()
-
-	var player *models.Player = models.NewPlayer(session) // Initially, no player is assigned
+func handleConnection(player *models.Player) {
+	defer player.Session.Conn.Close()
 
 	for {
 		buffer := make([]byte, 1024)
-		n, err := session.Conn.Read(buffer)
+		n, err := player.Session.Conn.Read(buffer)
 		if err != nil {
 			fmt.Println("Error reading from connection:", err)
 			return
@@ -47,23 +47,12 @@ func handleConnection(session *models.Session) {
 		data := serializers.NewByteBufferWithData(buffer[:n])
 		opcode := data.ReadUInt16() // Assuming opcode is 16-bit
 
-		if opcode < 0x100 {
-			// Call handler based on opcode
-			if handler, ok := AuthHandlers[opcode]; ok {
-				handler(data, session)
-			} else {
-				fmt.Println("Unknown opcode:", opcode)
-			}
+		// Choose the correct handler map based on opcode
+		// Call handler based on opcode
+		if handler, ok := handlers.Handlers[opcode]; ok {
+			handler(data, player)
 		} else {
-			if player != nil {
-				// Call handler based on opcode
-				if handler, ok := GameHandlers[opcode]; ok {
-					handler(data, player)
-				} else {
-					fmt.Println("Unknown opcode:", opcode)
-				}
-			}
+			fmt.Println("Unknown opcode:", opcode)
 		}
-
 	}
 }

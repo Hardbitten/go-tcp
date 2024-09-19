@@ -3,11 +3,11 @@ package models
 import "fmt"
 
 type Lobby struct {
-	Players []*Session
+	Players []*Player
 }
 
 // NewLobby creates a new lobby with players
-func NewLobby(players []*Session) *Lobby {
+func NewLobby(players []*Player) *Lobby {
 	return &Lobby{
 		Players: players,
 	}

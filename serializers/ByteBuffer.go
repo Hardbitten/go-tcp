@@ -3,6 +3,7 @@ package serializers
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"io"
 )
 
@@ -206,7 +207,18 @@ func (b *ByteBuffer) ReadToEnd() []byte {
 
 // GetData gets the data from the buffer
 func (b *ByteBuffer) GetData() []byte {
-	data := b.writeStream.Bytes()
+	// Check if readStream is available
+	if b.readStream == nil {
+		fmt.Println("readStream is nil")
+		return nil
+	}
+
+	// Read data from readStream
+	data, err := io.ReadAll(b.readStream)
+	if err != nil {
+		fmt.Println("Error reading from readStream:", err)
+		return nil
+	}
 	return data
 }
 
@@ -305,5 +317,18 @@ func (b *ByteBuffer) WriteBool(data bool) {
 // WriteBytes writes a byte array to the buffer
 func (b *ByteBuffer) WriteBytes(data []byte) {
 	b.FlushBits()
+	binary.Write(b.writeStream, binary.LittleEndian, data)
+}
+
+// WriteBytesWithLength writes a byte array to the buffer with a fixed length
+func (b *ByteBuffer) WriteBytesWithLength(data []byte, length int) {
+	b.FlushBits()
+	if len(data) > length {
+		data = data[:length] // truncate if necessary
+	} else if len(data) < length {
+		// Pad with zero bytes if necessary
+		padding := make([]byte, length-len(data))
+		data = append(data, padding...)
+	}
 	binary.Write(b.writeStream, binary.LittleEndian, data)
 }

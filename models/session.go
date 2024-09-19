@@ -41,9 +41,9 @@ func generateUniqueID() string {
 
 // Broadcast sends data to all players in the session's lobby
 func (s *Session) Broadcast(data []byte, lobby *Lobby) {
-	for _, session := range lobby.Players {
-		if session.ID != s.ID { // Don't send to the sender
-			session.Conn.Write(data)
+	for _, player := range lobby.Players {
+		if player.Session.ID != s.ID { // Don't send to the sender
+			player.Session.Conn.Write(data)
 		}
 	}
 }

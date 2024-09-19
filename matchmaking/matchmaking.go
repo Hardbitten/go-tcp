@@ -5,11 +5,11 @@ import (
 	"main/models"
 )
 
-var waitingPlayers []*models.Session
+var waitingPlayers []*models.Player
 
 // AddPlayerToMatchmaking adds a player to the matchmaking queue
-func AddPlayerToMatchmaking(session *models.Session) {
-	waitingPlayers = append(waitingPlayers, session)
+func AddPlayerToMatchmaking(player *models.Player) {
+	waitingPlayers = append(waitingPlayers, player)
 	if len(waitingPlayers) >= 4 { // Example: Start match with 4 players
 		startMatch()
 	}
@@ -21,7 +21,7 @@ func startMatch() {
 
 	// Send ready check to all players
 	for _, session := range waitingPlayers {
-		session.SendReadyCheck()
+		session.Session.SendReadyCheck()
 	}
 
 	// If all players are ready, move them to a lobby
@@ -31,5 +31,5 @@ func startMatch() {
 	lobby.StartGame()
 
 	// Clear matchmaking queue
-	waitingPlayers = []*models.Session{}
+	waitingPlayers = []*models.Player{}
 }
