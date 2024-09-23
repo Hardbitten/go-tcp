@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"main/models"
+	op "main/opcodes"
 	"main/serializers"
 )
 
@@ -9,9 +10,11 @@ import (
 type HandlerType func(data *serializers.ByteBuffer, player *models.Player)
 
 var Handlers = map[uint16]HandlerType{
-	0x01: HandleAuthLogin, // AUTH_LOGIN
-
-	0x500: HandlePlayerEnterWorld,
-	// 0x101: HandlePlayerEnterWorld1,
-	// 0x102: HandlePlayerEnterWorld2,
+	op.CMSG_OPCODE_AUTH_LOGIN:             HandleAuthLogin,
+	op.CMSG_OPCODE_MATCH_FIND_START:       HandleMatchFindStart,
+	op.CMSG_OPCODE_MATCH_FIND_CANCEL:      HandleMatchFindCancel,
+	op.CMSG_OPCODE_PLAYER_ENTER_WORLD:     HandlePlayerEnterWorld,
+	op.CMSG_OPCODE_PLAYER_UPDATE_POSITION: HandlePlayerUpdatePosition,
+	op.CMSG_OPCODE_PLAYER_UPDATE_ROTATION: HandlePlayerUpdateRotation,
+	op.CMSG_OPCODE_PLAYER_MESSAGE_SAY:     HandlePlayerMessageSay,
 }

@@ -205,21 +205,35 @@ func (b *ByteBuffer) ReadToEnd() []byte {
 	return data
 }
 
-// GetData gets the data from the buffer
+// GetData gets the data from the buffer (either from readStream or writeStream)
 func (b *ByteBuffer) GetData() []byte {
-	// Check if readStream is available
-	if b.readStream == nil {
-		fmt.Println("readStream is nil")
+	// Check if both readStream and writeStream are nil
+	if b.readStream == nil && b.writeStream == nil {
+		fmt.Println("Both readStream and writeStream are nil")
 		return nil
 	}
 
-	// Read data from readStream
-	data, err := io.ReadAll(b.readStream)
-	if err != nil {
-		fmt.Println("Error reading from readStream:", err)
-		return nil
+	// If readStream is available, read data from it
+	if b.readStream != nil {
+		data, err := io.ReadAll(b.readStream)
+		if err != nil {
+			fmt.Println("Error reading from readStream:", err)
+			return nil
+		}
+		return data
 	}
-	return data
+
+	// If writeStream is available and readStream is nil, read data from writeStream
+	if b.writeStream != nil {
+		data, err := io.ReadAll(b.writeStream)
+		if err != nil {
+			fmt.Println("Error reading from writeStream:", err)
+			return nil
+		}
+		return data
+	}
+
+	return nil
 }
 
 // GetSize gets the size of the buffer

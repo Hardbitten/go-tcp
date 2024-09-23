@@ -7,8 +7,8 @@ import (
 	// Import other necessary packages
 )
 
-func HandleLobbyFindMatch(data *serializers.ByteBuffer, player *models.Player) {
+func HandleMatchFindCancel(data *serializers.ByteBuffer, player *models.Player) {
 	// Deserialize data
 	// Process finding match
-	fmt.Println("Handling LOBY_FIND_MATCH")
+	fmt.Println("Handling Match Find")
 }

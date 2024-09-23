@@ -1,0 +1,18 @@
+package opcodes
+
+// Define opcodes
+const (
+	SMSG_OPCODE_AUTH_HANDSHAKE uint16 = 0x02
+)
+
+const (
+	CMSG_OPCODE_AUTH_LOGIN    uint16 = 0x01
+	CMSG_OPCODE_AUTH_REGISTER uint16 = 0x02
+)
+
+const (
+	AUTH_HANDSHAKE_RESULT_OK        = 0x00
+	AUTH_HANDSHAKE_RESULT_NOT_FOUND = 0x01
+	AUTH_HANDSHAKE_RESULT_BANNED    = 0x02
+	AUTH_HANDSHAKE_RESULT_ERR       = 0x03
+)
