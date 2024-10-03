@@ -4,6 +4,7 @@ import (
 	"fmt"
 	handlers "main/handlers"
 	"main/models"
+	"main/opcodes"
 	"main/serializers"
 	"net"
 )
@@ -34,7 +35,7 @@ func main() {
 }
 
 func handleConnection(player *models.Player) {
-	defer player.Session.Conn.Close()
+	defer Disconnect(player)
 
 	for {
 		buffer := make([]byte, 1024)
@@ -55,4 +56,14 @@ func handleConnection(player *models.Player) {
 			fmt.Println("Unknown opcode:", opcode)
 		}
 	}
+}
+
+func Disconnect(player *models.Player) {
+
+	bf := serializers.NewByteBuffer()
+	bf.WriteUInt16(opcodes.CMSG_OPCODE_PLAYER_DISCONNECT)
+	handlers.HandlePlayerDisconnect(bf, player)
+
+	player.Session.Conn.Close()
+	fmt.Printf("Socket[%d] Disconnected\n", player.ID)
 }

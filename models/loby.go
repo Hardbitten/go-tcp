@@ -7,20 +7,43 @@ import (
 )
 
 type Lobby struct {
+	ID      uint32
 	Players []*Player
 }
 
-// NewLobby creates a new lobby with players
 func NewLobby(players []*Player) *Lobby {
 	return &Lobby{
 		Players: players,
 	}
 }
 
-// StartGame starts the game for all players in the lobby
+func (l *Lobby) AddPlayer(player *Player) {
+	l.Players = append(l.Players, player)
+}
+
+func (l *Lobby) RemovePlayer(playerID uint32) {
+	if len(l.Players) == 0 {
+		fmt.Println("No players in the lobby to remove.")
+		return
+	}
+
+	for i, p := range l.Players {
+		if p == nil {
+			continue // Skip nil players
+		}
+		if p.ID == playerID {
+			// Remove the player from the slice
+			l.Players = append(l.Players[:i], l.Players[i+1:]...)
+			fmt.Printf("Player %d removed from the lobby.\n", playerID)
+			return
+		}
+	}
+
+	fmt.Printf("Player %d not found in the lobby.\n", playerID)
+}
+
 func (l *Lobby) StartGame() {
 	fmt.Println("Starting game for lobby with players:", len(l.Players))
-	// Implement game start logic, broadcast data to all players
 
 	for _, player := range l.Players {
 		bf := SerializeMatchReady(player)
@@ -32,6 +55,7 @@ func (l *Lobby) StartGame() {
 func SerializeMatchReady(player *Player) *serializers.ByteBuffer {
 	buffer := serializers.NewByteBuffer()
 	buffer.WriteUInt16(op.SMSG_OPCODE_MATCH_READY)
+	buffer.WriteUInt32(player.ID)
 
 	return buffer
 }

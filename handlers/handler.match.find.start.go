@@ -9,5 +9,6 @@ import (
 
 func HandleMatchFindStart(data *serializers.ByteBuffer, player *models.Player) {
 	fmt.Println("Handling Match Find")
-	matchmaking.AddPlayerToMatchmaking(player)
+	isWarmup := data.ReadBool() // Example: read from request whether it's a warm-up lobby or not
+	matchmaking.AddPlayerToMatchmaking(player, isWarmup)
 }

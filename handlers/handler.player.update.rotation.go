@@ -13,9 +13,12 @@ func HandlePlayerUpdateRotation(data *serializers.ByteBuffer, player *models.Pla
 
 	bf.WriteUInt32(player.ID)
 
-	bf.WriteFloat(data.ReadFloat())
-	bf.WriteFloat(data.ReadFloat())
-	bf.WriteFloat(data.ReadFloat())
+	// Y Axies
+	y := data.ReadFloat()
+
+	bf.WriteFloat(y)
+
+	player.Rotation = y
 
 	player.BroadcastLobby(bf)
 }

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"main/opcodes"
 	"main/serializers"
 )
@@ -16,7 +17,6 @@ type Player struct {
 
 var LastPlayerId uint32 = 0
 
-// NewPlayer creates a new player and associates it with a session
 func NewPlayer(session *Session) *Player {
 	LastPlayerId++
 	return &Player{
@@ -27,28 +27,22 @@ func NewPlayer(session *Session) *Player {
 	}
 }
 
-// SerializePlayerEnterWorld serializes data for PLAYER_ENTER_WORLD opcode
 func SerializePlayerEnterWorld(player *Player) *serializers.ByteBuffer {
 	buffer := serializers.NewByteBuffer()
 
-	// Write opcode for PLAYER_ENTER_WORLD (assume it's 0x01)
-	buffer.WriteUInt16(opcodes.SMSG_OPCODE_PLAYER_ENTER_WORLD) // Replace with the correct opcode
+	buffer.WriteUInt16(opcodes.SMSG_OPCODE_PLAYER_ENTER_WORLD)
 
-	// Serialize player ID (4 bytes)
 	buffer.WriteUInt32(player.ID)
 
-	// Serialize player position (3 * 4 bytes for float32 each)
 	buffer.WriteFloat(player.Position.X)
 	buffer.WriteFloat(player.Position.Y)
 	buffer.WriteFloat(player.Position.Z)
 
 	buffer.WriteFloat(player.Rotation)
 
-	// Serialize other player data as needed (e.g., name, status)
-	// For example, serialize player name with fixed length
 	name := player.Name
 	if len(name) > 30 {
-		name = name[:30] // truncate if necessary
+		name = name[:30] // truncate
 	}
 	buffer.WriteBytesWithLength([]byte(name), 30) // Fixed length of 30 bytes
 
@@ -56,8 +50,30 @@ func SerializePlayerEnterWorld(player *Player) *serializers.ByteBuffer {
 }
 
 func (player *Player) BroadcastLobby(bf *serializers.ByteBuffer) {
+	// Check if the player is in a valid lobby
+	if player.Lobby == nil {
+		fmt.Println("Error: Player is not assigned to any lobby.")
+		return
+	}
+
+	// Check if the lobby has any players
+	if len(player.Lobby.Players) == 0 {
+		fmt.Println("Error: Lobby has no players.")
+		return
+	}
+
+	// Iterate through the lobby players and broadcast the message
 	for _, lobyPlayer := range player.Lobby.Players {
-		if lobyPlayer.ID != player.ID { // Don't send to the sender
+		// Skip sending the message to the sender (the player who initiated the broadcast)
+		if lobyPlayer.ID != player.ID {
+			// Check if the player's session or connection is nil
+			if lobyPlayer.Session == nil || lobyPlayer.Session.Conn == nil {
+				fmt.Printf("Error: Session or connection for player %d is nil, skipping.\n", lobyPlayer.ID)
+				continue
+			}
+
+			// Broadcast the message to the other players
+			fmt.Printf("Broadcasting to player ID %d\n", lobyPlayer.ID)
 			lobyPlayer.Session.Conn.Write(bf.GetData())
 		}
 	}

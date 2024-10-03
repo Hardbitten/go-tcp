@@ -13,9 +13,13 @@ func HandlePlayerUpdatePosition(data *serializers.ByteBuffer, player *models.Pla
 
 	bf.WriteUInt32(player.ID)
 
-	bf.WriteFloat(data.ReadFloat()) // p X
-	bf.WriteFloat(data.ReadFloat()) // p Y
-	bf.WriteFloat(data.ReadFloat()) // p Z
+	x, y, z := data.ReadFloat(), data.ReadFloat(), data.ReadFloat()
+
+	bf.WriteFloat(x) // p X
+	bf.WriteFloat(y) // p Y
+	bf.WriteFloat(z) // p Z
+
+	player.Position = models.NewVector(x, y, z)
 
 	player.BroadcastLobby(bf)
 

@@ -19,5 +19,25 @@ func HandlePlayerEnterWorld(data *serializers.ByteBuffer, player *models.Player)
 	bf.WriteFloat(0)
 
 	player.BroadcastLobby(bf)
-	fmt.Printf("player [%d] joined to loby\n", player.ID)
+	fmt.Printf("player [%d] joined to Game\n", player.ID)
+
+	// send sync
+	for _, lobbyPlayer := range player.Lobby.Players {
+		if lobbyPlayer.ID != player.ID {
+
+			// Get latest Data for user
+			bfSync := serializers.NewByteBuffer()
+			bfSync.WriteUInt16(opcodes.SMSG_OPCODE_PLAYER_SYNC)
+			bfSync.WriteUInt32(lobbyPlayer.ID)
+
+			x, y, z := lobbyPlayer.Position.X, lobbyPlayer.Position.Y, lobbyPlayer.Position.Z
+			rotation := lobbyPlayer.Rotation
+			bfSync.WriteFloat(x)
+			bfSync.WriteFloat(y)
+			bfSync.WriteFloat(z)
+			bfSync.WriteFloat(rotation)
+			player.Session.Conn.Write(bfSync.GetData())
+		}
+
+	}
 }
