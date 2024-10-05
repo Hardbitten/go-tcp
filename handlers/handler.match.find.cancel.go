@@ -10,5 +10,5 @@ import (
 func HandleMatchFindCancel(data *utils.ByteBuffer, player *models.Player) {
 	// Deserialize data
 	// Process finding match
-	fmt.Println("Handling Match Find")
+	fmt.Println("Handling MATCH_FIND_CANCEL")
 }

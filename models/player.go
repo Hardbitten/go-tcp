@@ -8,14 +8,18 @@ import (
 type Player struct {
 	ID       uint32
 	Name     string
-	Session  *Session // Player inherits the session to access socket and ID
+	ClassID  ClassType
 	Position utils.Vector3
 	Rotation float32
-	Lobby    *Lobby // Player is part of a lobby when matchmaking is done
+	Session  *Session // Player inherits the session to access socket and ID
+	Lobby    *Lobby   // Player is part of a lobby when matchmaking is done
 
-	Health  int
-	Mana    int
-	ClassID ClassType
+	MagicResistance float32
+
+	Health      int
+	HealthRegen int
+	Mana        int
+	ManaRegen   int
 }
 
 var LastPlayerId uint32 = 0

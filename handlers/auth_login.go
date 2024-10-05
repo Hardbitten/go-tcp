@@ -1,51 +1,25 @@
 package handlers
 
 import (
-	"bytes"
 	"fmt"
+	"main/deserializers"
+	"main/enums"
 	"main/models"
-	"main/opcodes"
+	"main/serializers"
 	"main/utils"
-	// Import other necessary packages
 )
 
 func HandleAuthLogin(data *utils.ByteBuffer, player *models.Player) {
-	// Deserialize data
-	// Process login
 	fmt.Println("Handling AUTH_LOGIN")
-	username, password := DeserializeAuthLogin(data)
+	username, password, err := deserializers.DeserializeAuthLogin(data)
+	if err != nil {
+		fmt.Printf("Error ! [%s]", err)
+	}
+
 	fmt.Printf("Handling AUTH_LOGIN for user: %s with password: %s\n", username, password)
 
-	fmt.Println(username)
-	fmt.Println(password)
-
 	// Check user and pass in db.
-
-	bf := SerializeAuthHandshake()
+	bf := serializers.SerializeAuthHandshake(data, enums.AUTH_HANDSHAKE_RESULT_OK)
 	player.Session.Conn.Write(bf.GetData())
 
-}
-
-// DeserializeAuthLogin deserializes data for AUTH_LOGIN opcode
-func DeserializeAuthLogin(data *utils.ByteBuffer) (string, string) {
-	// Read username
-	username := make([]byte, 30)
-	data.GetCurrentStream().Read(username)
-
-	// Read password
-	password := make([]byte, 30)
-	data.GetCurrentStream().Read(password)
-
-	return string(bytes.Trim(username, "\x00")), string(bytes.Trim(password, "\x00"))
-
-}
-
-// DeserializeAuthLogin deserializes data for AUTH_LOGIN opcode
-func SerializeAuthHandshake() (data *utils.ByteBuffer) {
-	bf := utils.NewByteBuffer()
-	bf.WriteUInt16(opcodes.SMSG_OPCODE_AUTH_HANDSHAKE)
-
-	bf.WriteUInt16(opcodes.AUTH_HANDSHAKE_RESULT_OK)
-
-	return bf
 }

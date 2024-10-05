@@ -8,6 +8,6 @@ import (
 )
 
 func HandleMatchWarmUp(data *utils.ByteBuffer, player *models.Player) {
-	fmt.Println("Handling Match Warm Up")
+	fmt.Println("Handling MATCH_WARM_UP")
 	m.AddPlayerToMatchmaking(player, true)
 }

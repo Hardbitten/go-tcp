@@ -3,6 +3,7 @@ package matchmaking
 import (
 	"fmt"
 	"main/models"
+	"main/serializers"
 	"sync"
 )
 
@@ -61,7 +62,7 @@ func AddPlayerToMatchmaking(player *models.Player, isWarmup bool) {
 	// Warm-up lobby behavior
 	if lobby.ID == 0 {
 		// Send MatchReady immediately for warm-up lobbies
-		bf := models.SerializeMatchReady(player)
+		bf := serializers.SerializeMatchReady(player.ID)
 		player.Session.Conn.Write(bf.GetData())
 	} else {
 		// For normal lobbies, wait for enough players (e.g., 4 players) to start the match
@@ -110,7 +111,7 @@ func startMatch(lobby *models.Lobby) {
 
 		// Notify all players that the match has started
 		for _, player := range lobby.Players {
-			bf := models.SerializeMatchReady(player)
+			bf := serializers.SerializeMatchReady(player.ID)
 			player.Session.Conn.Write(bf.GetData())
 		}
 	} else {
