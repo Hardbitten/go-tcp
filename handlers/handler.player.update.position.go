@@ -2,24 +2,16 @@ package handlers
 
 import (
 	"main/models"
-	"main/opcodes"
 	"main/serializers"
+	utils "main/utils"
 )
 
 func HandlePlayerUpdatePosition(data *serializers.ByteBuffer, player *models.Player) {
 
-	bf := serializers.NewByteBuffer()
-	bf.WriteUInt16(opcodes.SMSG_OPCODE_PLAYER_UPDATE_POSITION)
+	position := utils.NewVector(data.ReadFloat(), data.ReadFloat(), data.ReadFloat())
+	bf := serializers.SerializePlayerPosition(player.ID, position)
 
-	bf.WriteUInt32(player.ID)
-
-	x, y, z := data.ReadFloat(), data.ReadFloat(), data.ReadFloat()
-
-	bf.WriteFloat(x) // p X
-	bf.WriteFloat(y) // p Y
-	bf.WriteFloat(z) // p Z
-
-	player.Position = models.NewVector(x, y, z)
+	player.Position = position
 
 	player.BroadcastLobby(bf)
 

@@ -2,17 +2,21 @@ package models
 
 import (
 	"fmt"
-	"main/opcodes"
 	"main/serializers"
+	utils "main/utils"
 )
 
 type Player struct {
 	ID       uint32
 	Name     string
 	Session  *Session // Player inherits the session to access socket and ID
-	Position Vector3
+	Position utils.Vector3
 	Rotation float32
 	Lobby    *Lobby // Player is part of a lobby when matchmaking is done
+
+	Health  int
+	Mana    int
+	ClassID ClassType
 }
 
 var LastPlayerId uint32 = 0
@@ -22,31 +26,27 @@ func NewPlayer(session *Session) *Player {
 	return &Player{
 		ID:       LastPlayerId,
 		Session:  session,
-		Position: Vector3{X: 0, Y: 0, Z: 0}, // Initialize position at origin
+		Position: utils.Vector3{X: 0, Y: 0, Z: 0}, // Initialize position at origin
 		Rotation: 0,
 	}
 }
 
-func SerializePlayerEnterWorld(player *Player) *serializers.ByteBuffer {
-	buffer := serializers.NewByteBuffer()
-
-	buffer.WriteUInt16(opcodes.SMSG_OPCODE_PLAYER_ENTER_WORLD)
-
-	buffer.WriteUInt32(player.ID)
-
-	buffer.WriteFloat(player.Position.X)
-	buffer.WriteFloat(player.Position.Y)
-	buffer.WriteFloat(player.Position.Z)
-
-	buffer.WriteFloat(player.Rotation)
-
-	name := player.Name
-	if len(name) > 30 {
-		name = name[:30] // truncate
+// The Cast method now takes a Player as the caster
+func (caster *Player) CastSpell(s *Spell) bool {
+	if caster.Mana < s.ManaCost {
+		fmt.Printf("%s does not have enough mana to cast %s\n", caster.Name, s.Name)
+		return false
 	}
-	buffer.WriteBytesWithLength([]byte(name), 30) // Fixed length of 30 bytes
 
-	return buffer
+	// Apply spell effects, such as reducing mana and dealing damage to targets
+	fmt.Printf("%s casts %s!\n", caster.Name, s.Name)
+
+	// Deduct mana from the player
+	caster.Mana -= s.ManaCost
+
+	// Handle additional logic here like cooldowns, applying effects to enemies, etc.
+
+	return true
 }
 
 func (player *Player) BroadcastLobby(bf *serializers.ByteBuffer) {
