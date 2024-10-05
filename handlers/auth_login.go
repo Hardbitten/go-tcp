@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"main/models"
 	"main/opcodes"
-	"main/serializers"
+	"main/utils"
 	// Import other necessary packages
 )
 
-func HandleAuthLogin(data *serializers.ByteBuffer, player *models.Player) {
+func HandleAuthLogin(data *utils.ByteBuffer, player *models.Player) {
 	// Deserialize data
 	// Process login
 	fmt.Println("Handling AUTH_LOGIN")
@@ -27,7 +27,7 @@ func HandleAuthLogin(data *serializers.ByteBuffer, player *models.Player) {
 }
 
 // DeserializeAuthLogin deserializes data for AUTH_LOGIN opcode
-func DeserializeAuthLogin(data *serializers.ByteBuffer) (string, string) {
+func DeserializeAuthLogin(data *utils.ByteBuffer) (string, string) {
 	// Read username
 	username := make([]byte, 30)
 	data.GetCurrentStream().Read(username)
@@ -41,8 +41,8 @@ func DeserializeAuthLogin(data *serializers.ByteBuffer) (string, string) {
 }
 
 // DeserializeAuthLogin deserializes data for AUTH_LOGIN opcode
-func SerializeAuthHandshake() (data *serializers.ByteBuffer) {
-	bf := serializers.NewByteBuffer()
+func SerializeAuthHandshake() (data *utils.ByteBuffer) {
+	bf := utils.NewByteBuffer()
 	bf.WriteUInt16(opcodes.SMSG_OPCODE_AUTH_HANDSHAKE)
 
 	bf.WriteUInt16(opcodes.AUTH_HANDSHAKE_RESULT_OK)

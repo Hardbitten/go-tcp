@@ -3,11 +3,11 @@ package handlers
 import (
 	"main/models"
 	op "main/opcodes"
-	"main/serializers"
+	"main/utils"
 )
 
 // Define a type for the handler function
-type HandlerType func(data *serializers.ByteBuffer, player *models.Player)
+type HandlerType func(data *utils.ByteBuffer, player *models.Player)
 
 var Handlers = map[uint16]HandlerType{
 	op.CMSG_OPCODE_AUTH_LOGIN:             HandleAuthLogin,

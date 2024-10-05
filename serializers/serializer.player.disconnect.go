@@ -2,10 +2,11 @@ package serializers
 
 import (
 	"main/opcodes"
+	"main/utils"
 )
 
-func SerializePlayerDisconnect(PlayerID uint32) *ByteBuffer {
-	bf := NewByteBuffer()
+func SerializePlayerDisconnect(PlayerID uint32) *utils.ByteBuffer {
+	bf := utils.NewByteBuffer()
 	bf.WriteUInt16(opcodes.SMSG_OPCODE_PLAYER_DISCONNECT)
 	bf.WriteUInt32(PlayerID)
 

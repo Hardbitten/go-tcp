@@ -2,12 +2,12 @@ package serializers
 
 import (
 	"main/opcodes"
-	utils "main/utils"
+	"main/utils"
 )
 
-func SerializePlayerPosition(PlayerID uint32, Position utils.Vector3) *ByteBuffer {
+func SerializePlayerPosition(PlayerID uint32, Position utils.Vector3) *utils.ByteBuffer {
 
-	bf := NewByteBuffer()
+	bf := utils.NewByteBuffer()
 	bf.WriteUInt16(opcodes.SMSG_OPCODE_PLAYER_UPDATE_POSITION)
 
 	bf.WriteUInt32(PlayerID)

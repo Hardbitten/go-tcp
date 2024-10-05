@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"main/models"
 	"main/serializers"
+	"main/utils"
 )
 
-func HandlePlayerEnterWorld(data *serializers.ByteBuffer, player *models.Player) {
+func HandlePlayerEnterWorld(data *utils.ByteBuffer, player *models.Player) {
 
 	bf := serializers.SerializePlayerEnterWorld(player.ID, player.Position, player.Rotation, player.Name)
 

@@ -1,14 +1,20 @@
 package handlers
 
 import (
+	"fmt"
+	"main/deserializers"
 	"main/models"
 	"main/serializers"
-	utils "main/utils"
+	"main/utils"
 )
 
-func HandlePlayerUpdatePosition(data *serializers.ByteBuffer, player *models.Player) {
+func HandlePlayerUpdatePosition(data *utils.ByteBuffer, player *models.Player) {
 
-	position := utils.NewVector(data.ReadFloat(), data.ReadFloat(), data.ReadFloat())
+	position, err := deserializers.DeserializePlayerUpdatePosition(data)
+	if err != nil {
+		fmt.Printf("Error ! [%s]", err)
+	}
+
 	bf := serializers.SerializePlayerPosition(player.ID, position)
 
 	player.Position = position

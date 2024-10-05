@@ -5,7 +5,7 @@ import (
 	handlers "main/handlers"
 	"main/models"
 	"main/opcodes"
-	"main/serializers"
+	"main/utils"
 	"net"
 )
 
@@ -45,7 +45,7 @@ func handleConnection(player *models.Player) {
 			return
 		}
 
-		data := serializers.NewByteBufferWithData(buffer[:n])
+		data := utils.NewByteBufferWithData(buffer[:n])
 		opcode := data.ReadUInt16() // Assuming opcode is 16-bit
 
 		// Choose the correct handler map based on opcode
@@ -60,7 +60,7 @@ func handleConnection(player *models.Player) {
 
 func Disconnect(player *models.Player) {
 
-	bf := serializers.NewByteBuffer()
+	bf := utils.NewByteBuffer()
 	bf.WriteUInt16(opcodes.CMSG_OPCODE_PLAYER_DISCONNECT)
 	handlers.HandlePlayerDisconnect(bf, player)
 

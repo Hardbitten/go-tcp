@@ -2,10 +2,11 @@ package serializers
 
 import (
 	"main/opcodes"
+	"main/utils"
 )
 
-func SerializePlayerMessageChat(PlayerID uint32, MessageLength uint16, Message string) *ByteBuffer {
-	buffer := NewByteBuffer()
+func SerializePlayerMessageChat(PlayerID uint32, MessageLength uint16, Message string) *utils.ByteBuffer {
+	buffer := utils.NewByteBuffer()
 
 	buffer.WriteUInt16(opcodes.SMSG_MESSAGECHAT)
 	buffer.WriteUInt16(opcodes.SMSG_MESSAGECHAT) // Server opcode for broadcasting the message

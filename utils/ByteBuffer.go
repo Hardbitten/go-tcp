@@ -1,4 +1,4 @@
-package serializers
+package utils
 
 import (
 	"bytes"

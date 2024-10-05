@@ -2,8 +2,7 @@ package models
 
 import (
 	"fmt"
-	"main/serializers"
-	utils "main/utils"
+	"main/utils"
 )
 
 type Player struct {
@@ -49,7 +48,7 @@ func (caster *Player) CastSpell(s *Spell) bool {
 	return true
 }
 
-func (player *Player) BroadcastLobby(bf *serializers.ByteBuffer) {
+func (player *Player) BroadcastLobby(bf *utils.ByteBuffer) {
 	// Check if the player is in a valid lobby
 	if player.Lobby == nil {
 		fmt.Println("Error: Player is not assigned to any lobby.")

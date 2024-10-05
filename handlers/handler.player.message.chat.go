@@ -2,17 +2,18 @@ package handlers
 
 import (
 	"fmt"
+	"main/deserializers"
 	"main/models"
 	"main/serializers"
+	"main/utils"
 )
 
-func HandlePlayerMessageChat(data *serializers.ByteBuffer, player *models.Player) {
+func HandlePlayerMessageChat(data *utils.ByteBuffer, player *models.Player) {
 
-	// Read the length of the string message
-	messageLength := data.ReadUInt16()
-
-	// Read the actual message string
-	message := data.ReadString(uint(messageLength))
+	messageLength, message, err := deserializers.DeserializePlayerMessageChat(data)
+	if err != nil {
+		fmt.Printf("Error ! [%s]", err)
+	}
 
 	// Prepare the response buffer to broadcast the message
 	bf := serializers.SerializePlayerMessageChat(player.ID, messageLength, message)

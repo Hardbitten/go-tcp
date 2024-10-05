@@ -2,12 +2,12 @@ package serializers
 
 import (
 	"main/opcodes"
-	utils "main/utils"
+	"main/utils"
 )
 
-func SerializePlayerSync(PlayerID uint32, Position utils.Vector3, Rotation float32, Name string) *ByteBuffer {
+func SerializePlayerSync(PlayerID uint32, Position utils.Vector3, Rotation float32, Name string) *utils.ByteBuffer {
 	// Get latest Data for user
-	bfSync := NewByteBuffer()
+	bfSync := utils.NewByteBuffer()
 	bfSync.WriteUInt16(opcodes.SMSG_OPCODE_PLAYER_SYNC)
 	bfSync.WriteUInt32(PlayerID)
 

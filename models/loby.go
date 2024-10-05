@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 	op "main/opcodes"
-	"main/serializers"
+	"main/utils"
 )
 
 type Lobby struct {
@@ -52,8 +52,8 @@ func (l *Lobby) StartGame() {
 	}
 }
 
-func SerializeMatchReady(player *Player) *serializers.ByteBuffer {
-	buffer := serializers.NewByteBuffer()
+func SerializeMatchReady(player *Player) *utils.ByteBuffer {
+	buffer := utils.NewByteBuffer()
 	buffer.WriteUInt16(op.SMSG_OPCODE_MATCH_READY)
 	buffer.WriteUInt32(player.ID)
 

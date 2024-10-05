@@ -1,4 +1,4 @@
-package models
+package utils
 
 type Vector3 struct {
 	X, Y, Z float32
