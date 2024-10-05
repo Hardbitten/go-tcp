@@ -19,4 +19,5 @@ var Handlers = map[uint16]HandlerType{
 	op.CMSG_OPCODE_PLAYER_UPDATE_POSITION: HandlePlayerUpdatePosition,
 	op.CMSG_OPCODE_PLAYER_UPDATE_ROTATION: HandlePlayerUpdateRotation,
 	op.CMSG_OPCODE_MESSAGE_CHAT:           HandlePlayerMessageChat,
+	op.CMSG_OPCODE_PLAYER_CAST_SPELL:      HandlePlayerCastSpell,
 }
