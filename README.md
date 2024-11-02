@@ -97,7 +97,7 @@ Go-TCP cleans up as it goes by removing inactive connections, so the server does
 Let’s get a quick multiplayer scenario going:
 
 1. **Start the Server**: Open a terminal and run `go run server.go`.
-2. **Launch Clients**: Open more terminals, and run `go run client.go` for each one.
+2. **Launch Clients**: Connect and listen your tcp client to Server IP:PORT
 3. **Send Messages**: Type away in each client to see your message system in action!
 
 ---
