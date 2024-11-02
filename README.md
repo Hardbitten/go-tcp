@@ -63,22 +63,59 @@ func sendMessage(conn net.Conn, opcode uint16, data []byte) error {
 }
 ```
 
-### 🔍 Serialization and Deserialization
+### 🔍 Serialization and Deserialization with ByteBuffer
 
-Data is serialized and deserialized with Go's `encoding/binary`, keeping things compact and efficient for network traffic.
+**Go-TCP** includes a custom `ByteBuffer` package (`utils/ByteBuffer.go`) for serializing and deserializing data, making data processing efficient and compact.
 
-- **Serialization Example**:
+- **Example: Handling Incoming Messages**  
+  The server listens for specific opcodes and processes them based on incoming data from clients.
 
-    ```go
-    var dataBuffer bytes.Buffer
-    binary.Write(&dataBuffer, binary.LittleEndian, myStructInstance)
-    ```
+  ```go
+  package handlers
 
-- **Deserialization Example**:
+  import (
+      "main/models"
+      op "main/opcodes"
+      "main/utils"
+  )
 
-    ```go
-    binary.Read(dataBuffer, binary.LittleEndian, &myStructInstance)
-    ```
+  // Define a type for handler functions
+  type HandlerType func(data *utils.ByteBuffer, player *models.Player)
+
+  var Handlers = map[uint16]HandlerType{
+      op.CMSG_OPCODE_AUTH_LOGIN: HandleAuthLogin,
+      op.CMSG_OPCODE_MATCH_FIND_START: HandleMatchFindStart,
+      // More handlers here...
+  }
+  ```
+
+- **Deserialization Example (Incoming Messages)**  
+  Here’s how i handle player entry into the world using deserialization:
+
+  ```go
+  func HandlePlayerEnterWorld(data *utils.ByteBuffer, player *models.Player) {
+      bf := serializers.SerializePlayerEnterWorld(player.ID, player.Position, player.Rotation, player.Name)
+      player.BroadcastLobby(bf)
+      fmt.Printf("Player [%d] joined the game.", player.ID)
+  }
+  ```
+
+- **Serialization Example (Outgoing Messages)**  
+  Here’s an example of converting data to binary to send to the client:
+
+  ```go
+  func SerializePlayerEnterWorld(PlayerID uint32, Position utils.Vector3, Rotation float32, Name string) *utils.ByteBuffer {
+      buffer := utils.NewByteBuffer()
+      buffer.WriteUInt16(opcodes.SMSG_OPCODE_PLAYER_ENTER_WORLD)
+      buffer.WriteUInt32(PlayerID)
+      buffer.WriteFloat(Position.X)
+      buffer.WriteFloat(Position.Y)
+      buffer.WriteFloat(Position.Z)
+      buffer.WriteFloat(Rotation)
+      buffer.WriteBytesWithLength([]byte(Name), 30) // Fixed 30-byte length
+      return buffer
+  }
+  ```
 
 ---
 
@@ -97,7 +134,7 @@ Go-TCP cleans up as it goes by removing inactive connections, so the server does
 Let’s get a quick multiplayer scenario going:
 
 1. **Start the Server**: Open a terminal and run `go run server.go`.
-2. **Launch Clients**: Connect and listen your tcp client to Server IP:PORT
+2. **Launch Clients**: Connect and listen to the TCP server using the provided IP and port.
 3. **Send Messages**: Type away in each client to see your message system in action!
 
 ---
